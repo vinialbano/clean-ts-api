@@ -16,7 +16,6 @@ export class SignUpController implements Controller {
     this.addAccount = addAccount
   }
 
-  // @ts-expect-error HttpResponse return is undefined
   handle(httpRequest: HttpRequest): HttpResponse {
     try {
       const requiredFields = [
@@ -38,7 +37,11 @@ export class SignUpController implements Controller {
       if (!isValidEmail) {
         return badRequest(new InvalidParamError('email'))
       }
-      this.addAccount.add({ name, email, password })
+      const account = this.addAccount.add({ name, email, password })
+      return {
+        statusCode: 200,
+        body: account
+      }
     } catch (error) {
       return serverError()
     }
