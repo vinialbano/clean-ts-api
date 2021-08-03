@@ -16,6 +16,7 @@
   "author": "Vinicius Albano <vinialbano@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.4",
     "@types/validator": "^13.6.3",
