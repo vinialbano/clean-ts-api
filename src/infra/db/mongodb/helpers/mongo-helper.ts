@@ -11,7 +11,7 @@ export const MongoHelper = {
   getCollection(name: string): Collection {
     return this.client.db().collection(name)
   },
-  map: (collection: any, mongoId: ObjectId): any => {
+  map: ({ _id, ...collection }: any, mongoId: ObjectId): any => {
     return {
       id: mongoId.toHexString(),
       ...collection
