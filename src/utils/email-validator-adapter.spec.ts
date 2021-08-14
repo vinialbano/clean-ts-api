@@ -1,9 +1,13 @@
 import { EmailValidatorAdapter } from './email-validator-adapter'
-import validator from 'validator'
-jest.mock('validator', () => ({
-  isEmail(): boolean {
-    return true
-  }
+import Joi from 'joi'
+const mockValidate = jest.fn(() => ({ error: false }))
+const mockIsEmail = jest.fn(() => ({
+  validate: mockValidate
+}))
+jest.mock('joi', () => ({
+  string: jest.fn(() => ({
+    email: mockIsEmail
+  }))
 }))
 
 const makeSut = (): EmailValidatorAdapter => {
@@ -11,9 +15,13 @@ const makeSut = (): EmailValidatorAdapter => {
 }
 
 describe('EmailValidator Adapter', () => {
-  test('Should return false if validator returns false', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('Should return false if Joi returns error', () => {
     const sut = makeSut()
-    jest.spyOn(validator, 'isEmail').mockReturnValueOnce(false)
+    mockValidate.mockReturnValueOnce({ error: true })
     const isValid = sut.isValid('invalid_email@mail.com')
     expect(isValid).toBe(false)
   })
@@ -24,10 +32,11 @@ describe('EmailValidator Adapter', () => {
     expect(isValid).toBe(true)
   })
 
-  test('Should call validator with correct email', () => {
+  test('Should call Joi validation methods with correct email', () => {
     const sut = makeSut()
-    const isEmailSpy = jest.spyOn(validator, 'isEmail')
     sut.isValid('any_email@mail.com')
-    expect(isEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
+    expect(Joi.string).toHaveBeenCalled()
+    expect(mockIsEmail).toHaveBeenCalled()
+    expect(mockValidate).toHaveBeenCalledWith('any_email@mail.com')
   })
 })
