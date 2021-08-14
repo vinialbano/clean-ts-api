@@ -18,6 +18,7 @@ export class SignUpController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      // todo validate fields type
       const requiredFields = [
         'name',
         'email',
